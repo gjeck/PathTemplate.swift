@@ -47,10 +47,10 @@ Additional modifiers can be suffixed for different meaning:
 ```swift
 let template: PathTemplate = "https://:hostname/:path?"
 template.expand(["hostname": "github.com"])
-=> "https://github.com
+=> "https://github.com"
 
 template.expand(["hostname": "github.com", "path": "user"])
-=> "https://github.com/user
+=> "https://github.com/user"
 ```
 
 ##### `*` Zero or More
@@ -99,7 +99,7 @@ template.expand(["0": 123, "1": "wow"])
 
 #### Enforcing case sensitive matching
 ```swift
-let template = PathTemplate("/User/:id", Options(isCaseSensitive: true))
+let template = PathTemplate("/User/:id", options: Options(isCaseSensitive: true))
 template.extract("/user/123") // Note that "user" has a lowercase "u"
 => [] 
 ```
