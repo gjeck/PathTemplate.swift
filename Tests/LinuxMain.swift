@@ -1,5 +1,5 @@
 import XCTest
-@testable import PathTemplate
+@testable import PathTemplateTests
 
 XCTMain([
     testCase(PathTemplateTests.allTests),
