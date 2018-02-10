@@ -43,9 +43,9 @@ class PathTemplateTests: XCTestCase {
     }
     
     func testItCanExtractParametersFromSimplePath() {
-        let path: PathTemplate = "/album/:albumId/artist/:artistId"
-        let params = path.extract("/album/123/artist/456")
-        XCTAssertEqual(params, ["albumId": "123", "artistId": "456"])
+        let path: PathTemplate = "/artist/:artistId/album/:albumId"
+        let params = path.extract("/artist/123/album/456")
+        XCTAssertEqual(params, ["artistId": "123", "albumId": "456"])
     }
     
     func testInitializingWithDifferentOptionsResultsInInequality() {
@@ -101,6 +101,45 @@ class PathTemplateTests: XCTestCase {
         XCTAssertEqual(path.parameterNames, ["scheme", "hostname", "path", "0", "1"])
     }
     
+    func testItSupportsOptionalNamedParameters() {
+        let path: PathTemplate = ":scheme://:hostname/:path?"
+        let expandedWithParam = path.expand(["scheme": "https", "hostname": "github.com", "path": "gjeck"])
+        let expandedWithoutParam = path.expand(["scheme": "https", "hostname": "github.com"])
+        XCTAssertEqual(expandedWithParam, "https://github.com/gjeck")
+        XCTAssertEqual(expandedWithoutParam, "https://github.com")
+    }
+    
+    func testItSupportsZeroOrMoreParameters() {
+        let path: PathTemplate = "https://:hostname/:path*"
+        let expanded = path.expand(["hostname": "github.com", "path": ["user", "gjeck"]])
+        let expandedWithoutParam = path.expand(["hostname": "github.com"])
+        XCTAssertEqual(expanded, "https://github.com/user/gjeck")
+        XCTAssertEqual(expandedWithoutParam, "https://github.com")
+    }
+    
+    func testItSupportsOneOrMoreParameters() {
+        let path: PathTemplate = "https://:hostname/:path+"
+        let expanded = path.expand(["hostname": "github.com", "path": ["user", "gjeck"]])
+        let expandedWithoutParam = path.expand(["hostname": "github.com"])
+        XCTAssertEqual(expanded, "https://github.com/user/gjeck")
+        XCTAssertNil(expandedWithoutParam)
+    }
+    
+    func testItSupportsCustomMatchedParameters() {
+        let path: PathTemplate = "/image-:imageId(\\d+).png"
+        let expanded = path.expand(["imageId": 123])
+        let invalid = path.expand(["imageId": "abc"])
+        XCTAssertEqual(expanded, "/image-123.png")
+        XCTAssertNil(invalid)
+    }
+    
+    func testItSupportsUnnamedParameters() {
+        let path: PathTemplate = "/cool/(\\d+)/(.*)"
+        let expanded = path.expand(["0": 123, "1": "wow"])
+        XCTAssertEqual(path.parameterNames, ["0", "1"])
+        XCTAssertEqual(expanded, "/cool/123/wow")
+    }
+    
     static var allTests = [
         ("testItCanBeInitializedAsAStringLiteral", testItCanBeInitializedAsAStringLiteral),
         ("testItCanBeInitializedAsAStringLiteralWithUnicode", testItCanBeInitializedAsAStringLiteralWithUnicode),
@@ -115,7 +154,12 @@ class PathTemplateTests: XCTestCase {
         ("testItCanExtractFromComplexPath", testItCanExtractFromComplexPath),
         ("testItCanExpandParametersFromPathWithMultipleRegularExpressions", testItCanExpandParametersFromPathWithMultipleRegularExpressions),
         ("testItRespectsCaseSensitivityOptionForExtraction", testItRespectsCaseSensitivityOptionForExtraction),
-        ("testItProvidesAListOfParameterNames", testItProvidesAListOfParameterNames)
+        ("testItProvidesAListOfParameterNames", testItProvidesAListOfParameterNames),
+        ("testItSupportsOptionalNamedParameters", testItSupportsOptionalNamedParameters),
+        ("testItSupportsZeroOrMoreParameters", testItSupportsZeroOrMoreParameters),
+        ("testItSupportsOneOrMoreParameters", testItSupportsOneOrMoreParameters),
+        ("testItSupportsCustomMatchedParameters", testItSupportsCustomMatchedParameters),
+        ("testItSupportsUnnamedParameters", testItSupportsUnnamedParameters)
     ]
 }
 
