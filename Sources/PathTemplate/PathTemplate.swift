@@ -27,9 +27,10 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
     /// Expand the template using the given named parameters
     ///
     /// - Parameter params: the associated values to the named parameters
+    /// - Parameter encode: an optional encoding strategy for the expansion strategy
     /// - Returns: the expanded path if successful
-    public func expand(_ params: [String: Any]) -> String? {
-        return try? toPathMethod(params, nil)
+    public func expand(_ params: [String: Any], encode: ((String) -> String)? = nil) -> String? {
+        return try? toPathMethod(params, encode)
     }
 
     /// Extract the values of the named parameters in a path

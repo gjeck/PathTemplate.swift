@@ -125,6 +125,22 @@ class OrderedPathRegexTests: XCTestCase {
         XCTAssertEqual(path, "/artist/123/album/456")
     }
     
+    func testItCanCompileBackWithOneOrMoreParameters() {
+        let toPath = factory.compile("/user/:ids+")
+        let pathA = try? toPath(["ids": ["123", "456", "789"]], nil)
+        let pathB = try? toPath([:], nil)
+        XCTAssertEqual(pathA, "/user/123/456/789")
+        XCTAssertNil(pathB)
+    }
+    
+    func testItCanCompileBackWithZeroOrMoreParameters() {
+        let toPath = factory.compile("/user/:ids*")
+        let pathA = try? toPath(["ids": ["123", "456", "789"]], nil)
+        let pathB = try? toPath([:], nil)
+        XCTAssertEqual(pathA, "/user/123/456/789")
+        XCTAssertEqual(pathB, "/user")
+    }
+    
     private func does(regex: NSRegularExpression?, matchOn input: String) -> Bool {
         let length = input.utf16.count
         return regex?.firstMatch(in: input, options: [], range: NSRange(location: 0, length: length)) != nil
@@ -144,6 +160,8 @@ class OrderedPathRegexTests: XCTestCase {
         ("testItCanHandleUnicodeInPath", testItCanHandleUnicodeInPath),
         ("testItCanCompileBackToSimplePath", testItCanCompileBackToSimplePath),
         ("testItCanCompileBackToSimplePathWithUnicode", testItCanCompileBackToSimplePathWithUnicode),
-        ("testItCanCompileBackWithMultipleNamedParameters", testItCanCompileBackWithMultipleNamedParameters)
+        ("testItCanCompileBackWithMultipleNamedParameters", testItCanCompileBackWithMultipleNamedParameters),
+        ("testItCanCompileBackWithOneOrMoreParameters", testItCanCompileBackWithOneOrMoreParameters),
+        ("testItCanCompileBackWithZeroOrMoreParameters", testItCanCompileBackWithZeroOrMoreParameters)
     ]
 }
