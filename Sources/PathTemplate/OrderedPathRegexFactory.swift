@@ -199,19 +199,20 @@ struct OrderedPathRegexFactory {
                             throw Error.compile("Expected all \(token.name) to match \(token.pattern)")
                         }
                         
-                        path += (j == 0 ? token.prefix : token.delimiter) + encodedSegment
+                        path += (j == 0 ? token.prefix : token.delimiter) + segment
                     }
                     continue
                 }
                 
                 if let value = data[token.name] as? CustomStringConvertible {
-                    let encodedSegment = encodeMethod(String(describing: value))
+                    let segment = String(describing: value)
+                    let encodedSegment = encodeMethod(segment)
                     
                     if matches[index]?.firstMatch(in: encodedSegment, options: [], range: NSRange(location: 0, length: encodedSegment.utf16.count)) == nil {
                         throw Error.compile("Expected all \(token.name) to match \(token.pattern)")
                     }
                     
-                    path += token.prefix + encodedSegment
+                    path += token.prefix + segment
                     continue
                 }
                 
@@ -247,11 +248,8 @@ private extension String {
     }
     
     static func uriEncoded(_ str: String) -> String {
-        var set = CharacterSet()
-        set.formUnion(.urlHostAllowed)
-        set.formUnion(.urlPathAllowed)
-        set.formUnion(.urlQueryAllowed)
-        set.formUnion(.urlFragmentAllowed)
-        return str.addingPercentEncoding(withAllowedCharacters: set) ?? str
+        let unreservedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
+        let unreservedCharset = CharacterSet(charactersIn: unreservedChars)
+        return str.addingPercentEncoding(withAllowedCharacters: unreservedCharset) ?? str
     }
 }
