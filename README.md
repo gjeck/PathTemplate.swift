@@ -12,6 +12,12 @@ Append the following to your `Package.swift` `dependencies: []`
 .package(url: "https://github.com/gjeck/PathTemplate.swift.git")
 ```
 
+#### Cocoapods
+Add the following to your `Podfile`
+```ruby
+pod 'PathTemplate'
+```
+
 ## Basic Usage
 A `PathTemplate` is useful for working on structured `String` data like URLs.
 
