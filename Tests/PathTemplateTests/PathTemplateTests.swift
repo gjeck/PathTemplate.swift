@@ -96,6 +96,11 @@ class PathTemplateTests: XCTestCase {
         XCTAssertEqual(fullParams, ["0": "123"])
     }
     
+    func testItProvidesAListOfParameterNames() {
+        let path: PathTemplate = ":scheme://:hostname/:path*/(\\d+)/(.*).png"
+        XCTAssertEqual(path.parameterNames, ["scheme", "hostname", "path", "0", "1"])
+    }
+    
     static var allTests = [
         ("testItCanBeInitializedAsAStringLiteral", testItCanBeInitializedAsAStringLiteral),
         ("testItCanBeInitializedAsAStringLiteralWithUnicode", testItCanBeInitializedAsAStringLiteralWithUnicode),
@@ -109,7 +114,8 @@ class PathTemplateTests: XCTestCase {
         ("testItCanExpandParametersFromComplexPath", testItCanExpandParametersFromComplexPath),
         ("testItCanExtractFromComplexPath", testItCanExtractFromComplexPath),
         ("testItCanExpandParametersFromPathWithMultipleRegularExpressions", testItCanExpandParametersFromPathWithMultipleRegularExpressions),
-        ("testItRespectsCaseSensitivityOptionForExtraction", testItRespectsCaseSensitivityOptionForExtraction)
+        ("testItRespectsCaseSensitivityOptionForExtraction", testItRespectsCaseSensitivityOptionForExtraction),
+        ("testItProvidesAListOfParameterNames", testItProvidesAListOfParameterNames)
     ]
 }
 

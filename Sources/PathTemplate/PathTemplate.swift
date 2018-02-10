@@ -1,5 +1,6 @@
 import Foundation
 
+/// A data structure to represent a path template
 public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral {
     /// The underlying path template
     public let template: String
@@ -7,13 +8,20 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
     public let regex: NSRegularExpression?
     // The options used to generate the regular expression
     public let options: Options
+    /// The names of the template parameters
+    public let parameterNames: [String]
 
+    /// Creates a template from the given string pattern and options
+    ///
+    /// - Parameter template: the pattern string
+    /// - Parameter options: the characteristics to apply on the pattern
     public init(_ template: String, options: Options = Options()) {
         self.template = template
         self.options = options
         let factory = OrderedPathRegexFactory()
         (self.regex, self.keys) = factory.make(template, options: options)
         self.toPathMethod = factory.compile(template, options: options)
+        self.parameterNames = keys.map { $0.name }
     }
 
     public init(stringLiteral value: StringLiteralType) {
@@ -27,7 +35,7 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
     /// Expand the template using the given named parameters
     ///
     /// - Parameter params: the associated values to the named parameters
-    /// - Parameter encode: an optional encoding strategy for the expansion strategy
+    /// - Parameter encode: an optional encoding strategy for the expansion
     /// - Returns: the expanded path if successful
     public func expand(_ params: [String: Any], encode: ((String) -> String)? = nil) -> String? {
         return try? toPathMethod(params, encode)

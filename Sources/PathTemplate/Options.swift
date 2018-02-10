@@ -1,3 +1,4 @@
+/// Options for path template generation
 public struct Options {
     let isCaseSensitive: Bool
     let isStrict: Bool
@@ -6,6 +7,15 @@ public struct Options {
     let endsWith: [String]?
     let delimiters: String
     
+    /// Initializes an Options
+    ///
+    /// - Parameters:
+    ///     - isCaseSensitive: Determines if the path is case sensitive. Defaults to `false`
+    ///     - isStrict: Determines if a trailing delimeter is optional. Defaults to `false`
+    ///     - isMatchEnd: Determines if matches occur at the end. Defaults to `true`
+    ///     - delimiter: The default delimiter for segments. Defaults to `"/"`
+    ///     - endsWith: Optional character, or list of characters, to treat as "end" characters. Defaults to `nil`
+    ///     - delimiters: List of characters to consider delimiters when parsing. Defaults to `"./"`
     public init(isCaseSensitive: Bool = false,
                 isStrict: Bool = false,
                 isMatchEnd: Bool = true,
