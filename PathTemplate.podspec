@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'PathTemplate'
-  spec.version = '1.0.0'
+  spec.version = '1.0.1'
   spec.summary = 'Swift library for turning path strings like `/user/:id` into regular expressions'
   spec.homepage = 'https://github.com/gjeck/PathTemplate.swift'
   spec.license = { :type => 'MIT', :file => 'LICENSE' }
