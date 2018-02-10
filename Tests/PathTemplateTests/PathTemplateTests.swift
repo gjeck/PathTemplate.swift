@@ -62,9 +62,38 @@ class PathTemplateTests: XCTestCase {
     }
     
     func testItCanExtractFromComplexPath() {
-        let path: PathTemplate = ":scheme://:hostname/:path*.swift"
-        let params = path.extract("https://www.github.com/gjeck/PathTemplate.swift")
-        XCTAssertEqual(params, ["scheme": "https", "hostname": "www.github.com", "path": "gjeck/PathTemplate"])
+        let path: PathTemplate = ":scheme://:hostname/:path*"
+        let paramsA = path.extract("https://www.github.com/gjeck/PathTemplate.swift")
+        let paramsB = path.extract("https://www.github.com/")
+        XCTAssertEqual(paramsA, ["scheme": "https", "hostname": "www.github.com", "path": "gjeck/PathTemplate.swift"])
+        XCTAssertEqual(paramsB, ["scheme": "https", "hostname": "www.github.com"])
+    }
+    
+    func testItCanExpandParametersFromPathWithMultipleRegularExpressions() {
+        let path: PathTemplate = ":scheme://:hostname/:path*/(\\d+)/(.*).png"
+        let expanded = path.expand(["scheme": "https", "hostname": "www.github.com", "path": "gjeck", "0": 123, "1": "cool"])
+        XCTAssertEqual(expanded, "https://www.github.com/gjeck/123/cool.png")
+    }
+    
+    func testItCanExtractParametersFromPathWithMultipleRegularExpressions() {
+        let path: PathTemplate = ":scheme://:hostname/:path*/(\\d+)/(.*).png"
+        let params = path.extract("https://www.github.com/gjeck/PathTemplate.swift/123/cool.png")
+        let expected = [
+            "scheme": "https",
+            "hostname": "www.github.com",
+            "path": "gjeck/PathTemplate.swift",
+            "0": "123",
+            "1": "cool"
+        ]
+        XCTAssertEqual(params, expected)
+    }
+    
+    func testItRespectsCaseSensitivityOptionForExtraction() {
+        let path = PathTemplate("/User/(\\d+)/settings", options: Options(isCaseSensitive: true))
+        let emptyParams = path.extract("/user/123/settings")
+        let fullParams = path.extract("/User/123/settings")
+        XCTAssertTrue(emptyParams.isEmpty)
+        XCTAssertEqual(fullParams, ["0": "123"])
     }
     
     static var allTests = [
@@ -76,7 +105,11 @@ class PathTemplateTests: XCTestCase {
         ("testItCanBeDescribed", testItCanBeDescribed),
         ("testItCanExpandSimpleTemplateIntoPath", testItCanExpandSimpleTemplateIntoPath),
         ("testItCanExtractParametersFromSimplePath", testItCanExtractParametersFromSimplePath),
-        ("testInitializingWithDifferentOptionsResultsInInequality", testInitializingWithDifferentOptionsResultsInInequality)
+        ("testInitializingWithDifferentOptionsResultsInInequality", testInitializingWithDifferentOptionsResultsInInequality),
+        ("testItCanExpandParametersFromComplexPath", testItCanExpandParametersFromComplexPath),
+        ("testItCanExtractFromComplexPath", testItCanExtractFromComplexPath),
+        ("testItCanExpandParametersFromPathWithMultipleRegularExpressions", testItCanExpandParametersFromPathWithMultipleRegularExpressions),
+        ("testItRespectsCaseSensitivityOptionForExtraction", testItRespectsCaseSensitivityOptionForExtraction)
     ]
 }
 

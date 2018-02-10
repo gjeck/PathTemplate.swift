@@ -35,7 +35,7 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
     /// Extract the values of the named parameters in a path
     ///
     /// - Parameter path: the path to extract values from
-    /// - Returns: a map of the named parameters to the extracted values
+    /// - Returns: a dictionary of the named parameters to the extracted values
     public func extract(_ path: String) -> [String: String] {
         var result = [String: String]()
         
