@@ -1,4 +1,7 @@
 # PathTemplate
+[![Build Status](https://travis-ci.org/gjeck/PathTemplate.swift.svg?branch=master)](https://travis-ci.org/gjeck/PathTemplate.swift)
+[![codecov](https://codecov.io/gh/gjeck/PathTemplate.swift/branch/master/graph/badge.svg)](https://codecov.io/gh/gjeck/PathTemplate.swift)
+
 Swift implementation of templated paths. Inspired by [path-to-regexp](https://github.com/pillarjs/path-to-regexp) and [URITemplate.swift](https://github.com/kylef/URITemplate.swift).
 
 ## Installation
