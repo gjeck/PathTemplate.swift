@@ -56,8 +56,8 @@ class PathTemplateTests: XCTestCase {
     }
     
     func testItCanExpandParametersFromComplexPath() {
-        let path: PathTemplate = ":scheme://:hostname/:path.swift"
-        let expanded = path.expand(["scheme": "https", "hostname": "www.github.com", "path": "gjeck/PathTemplate"])
+        let path: PathTemplate = ":scheme://:hostname/:path+.swift"
+        let expanded = path.expand(["scheme": "https", "hostname": "www.github.com", "path": ["gjeck", "PathTemplate"]])
         XCTAssertEqual(expanded, "https://www.github.com/gjeck/PathTemplate.swift")
     }
     
@@ -138,6 +138,31 @@ class PathTemplateTests: XCTestCase {
         let expanded = path.expand(["0": 123, "1": "wow"])
         XCTAssertEqual(path.parameterNames, ["0", "1"])
         XCTAssertEqual(expanded, "/cool/123/wow")
+    }
+    
+    func testItSupportsZeroOrMoreParametersAndCustomMatchedParametersWithSpecificDelimiter() {
+        let path: PathTemplate = PathTemplate("mail.:domain*.com/user::id(\\d+)@:site.com",
+                                              options: .init(delimiter: "."))
+        let expanded = path.expand(["domain": ["github", "internal"], "id": 123, "site": "coolSpot"])
+        XCTAssertEqual(path.parameterNames, ["domain", "id", "site"])
+        XCTAssertEqual(expanded, "mail.github.internal.com/user:123@coolSpot.com")
+    }
+    
+    func testPathWithUnicodeAndCustomMatchedParametersWork() {
+        let path: PathTemplate = ":scheme://:userInfo@:host:port?/🤖/:setting([abc])"
+        XCTAssertEqual(path.parameterNames, ["scheme", "userInfo", "host", "port", "setting"])
+        let expandedMatch = path.expand(["scheme": "mailto", "userInfo": "me", "host": "github.com", "setting": "c"])
+        XCTAssertEqual(expandedMatch, "mailto://me@github.com/🤖/c")
+        let expandedNoMatch = path.expand(["scheme": "mailto", "userInfo": "me", "host": "github.com", "setting": "d"])
+        XCTAssertNil(expandedNoMatch)
+    }
+    
+    func testItSupportsBasicCustomEncodeStrategy() {
+        let path: PathTemplate = "/(user|u)/:id(\\d+)/:name?"
+        let expanded = path.expand(["0": "u", "id": 1234, "name": "r0b0t"]) { str in
+            return String(str.replacingOccurrences(of: "0", with: "o"))
+        }
+        XCTAssertEqual(expanded, "/u/1234/robot")
     }
     
     static var allTests = [

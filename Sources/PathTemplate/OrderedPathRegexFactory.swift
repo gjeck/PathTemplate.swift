@@ -12,8 +12,8 @@ struct OrderedPathRegexFactory {
     
     func parse(_ input: String, options: PathTemplate.Options = .init()) -> [Any] {
         let length = input.utf16.count
-        let matches = OrderedPathRegexFactory.pathRegex.matches(in: input, options: [],
-                                                                range: NSRange(location: 0, length: length))
+        let matches = NSRegularExpression.pathRegex.matches(in: input, options: [],
+                                                            range: NSRange(location: 0, length: length))
         
         var tokens = [Any]()
         var key: Int = 0
@@ -199,7 +199,7 @@ struct OrderedPathRegexFactory {
                             throw Error.compile("Expected all \(token.name) to match \(token.pattern)")
                         }
                         
-                        path += (j == 0 ? token.prefix : token.delimiter) + segment
+                        path += (j == 0 ? token.prefix : token.delimiter) + encodedSegment
                     }
                     continue
                 }
@@ -212,7 +212,7 @@ struct OrderedPathRegexFactory {
                         throw Error.compile("Expected all \(token.name) to match \(token.pattern)")
                     }
                     
-                    path += token.prefix + segment
+                    path += token.prefix + encodedSegment
                     continue
                 }
                 
@@ -231,9 +231,7 @@ struct OrderedPathRegexFactory {
         return function
     }
     
-    private static let pathRegex = try! NSRegularExpression(pattern: """
-    (\\\\.)|(?:\\:(\\w+)(?:\\(((?:\\\\.|[^\\\\()])+)\\))?|\\(((?:\\\\.|[^\\\\()])+)\\))([+*?])?
-    """, options: [.useUnicodeWordBoundaries])
+    
 }
 
 extension OrderedPathRegexFactory {
@@ -242,14 +240,21 @@ extension OrderedPathRegexFactory {
     }
 }
 
+private extension NSRegularExpression {
+    static let pathRegex = try! NSRegularExpression(pattern: """
+    (\\\\.)|(?:\\:(\\w+)(?:\\(((?:\\\\.|[^\\\\()])+)\\))?|\\(((?:\\\\.|[^\\\\()])+)\\))([+*?])?
+    """, options: [.useUnicodeWordBoundaries])
+}
+
 private extension String {
     var escaped: String {
         return NSRegularExpression.escapedPattern(for: self)
     }
     
+    static let unreservedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
+    static let unreservedCharset = CharacterSet(charactersIn: unreservedChars)
+    
     static func uriEncoded(_ str: String) -> String {
-        let unreservedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
-        let unreservedCharset = CharacterSet(charactersIn: unreservedChars)
         return str.addingPercentEncoding(withAllowedCharacters: unreservedCharset) ?? str
     }
 }
