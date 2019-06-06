@@ -105,7 +105,7 @@ template.expand(["0": 123, "1": "wow"])
 
 #### Enforcing case sensitive matching
 ```swift
-let template = PathTemplate("/User/:id", options: Options(isCaseSensitive: true))
+let template = PathTemplate("/User/:id", options: .init(isCaseSensitive: true))
 template.extract("/user/123") // Note that "user" has a lowercase "u"
 => [] 
 ```

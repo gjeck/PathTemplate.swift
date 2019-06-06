@@ -48,27 +48,27 @@ class OrderedPathRegexTests: XCTestCase {
     }
     
     func testItCanEnforceCaseSensitivity() {
-        let (regex, _) = factory.make("/Album/:id", options: Options(isCaseSensitive: true))
+        let (regex, _) = factory.make("/Album/:id", options: .init(isCaseSensitive: true))
         XCTAssertTrue(does(regex: regex, matchOn: "/Album/radical"))
         XCTAssertFalse(does(regex: regex, matchOn: "/album/123"))
     }
     
     func testItCanEnfoceStrictMode() {
-        let (regex, _) = factory.make("/test/", options: Options(isStrict: true))
+        let (regex, _) = factory.make("/test/", options: .init(isStrict: true))
         XCTAssertTrue(does(regex: regex, matchOn: "/test/"))
         XCTAssertTrue(does(regex: regex, matchOn: "/TEST/"))
         XCTAssertFalse(does(regex: regex, matchOn: "/test"))
     }
     
     func testItCanEnforceCaseAndStrictModes() {
-        let (regex, _) = factory.make("/test/", options: Options(isCaseSensitive: true, isStrict: true))
+        let (regex, _) = factory.make("/test/", options: .init(isCaseSensitive: true, isStrict: true))
         XCTAssertTrue(does(regex: regex, matchOn: "/test/"))
         XCTAssertFalse(does(regex: regex, matchOn: "/TEST/"))
         XCTAssertFalse(does(regex: regex, matchOn: "/test"))
     }
     
     func testItCanEnforceMatchEndMode() {
-        let (regex, _) = factory.make("/test/", options: Options(isMatchEnd: false))
+        let (regex, _) = factory.make("/test/", options: .init(isMatchEnd: false))
         XCTAssertTrue(does(regex: regex, matchOn: "/test/things"))
     }
     

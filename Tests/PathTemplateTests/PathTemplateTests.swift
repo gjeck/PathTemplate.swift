@@ -49,8 +49,8 @@ class PathTemplateTests: XCTestCase {
     }
     
     func testInitializingWithDifferentOptionsResultsInInequality() {
-        let caseSensitivePath = PathTemplate("/User/:id", options: Options(isCaseSensitive: true))
-        let caseInsensitivePath = PathTemplate("/User/:id", options: Options(isCaseSensitive: false))
+        let caseSensitivePath = PathTemplate("/User/:id", options: .init(isCaseSensitive: true))
+        let caseInsensitivePath = PathTemplate("/User/:id", options: .init(isCaseSensitive: false))
         XCTAssertNotEqual(caseSensitivePath, caseInsensitivePath)
         XCTAssertNotEqual(caseSensitivePath.hashValue, caseInsensitivePath.hashValue)
     }
@@ -89,7 +89,7 @@ class PathTemplateTests: XCTestCase {
     }
     
     func testItRespectsCaseSensitivityOptionForExtraction() {
-        let path = PathTemplate("/User/(\\d+)/settings", options: Options(isCaseSensitive: true))
+        let path = PathTemplate("/User/(\\d+)/settings", options: .init(isCaseSensitive: true))
         let emptyParams = path.extract("/user/123/settings")
         let fullParams = path.extract("/User/123/settings")
         XCTAssertTrue(emptyParams.isEmpty)

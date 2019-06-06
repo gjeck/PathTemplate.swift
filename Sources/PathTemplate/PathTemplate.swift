@@ -15,7 +15,7 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
     ///
     /// - Parameter template: the pattern string
     /// - Parameter options: the characteristics to apply on the pattern
-    public init(_ template: String, options: Options = Options()) {
+    public init(_ template: String, options: Options = .init()) {
         self.template = template
         self.options = options
         let factory = OrderedPathRegexFactory()
@@ -73,15 +73,66 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
     private let toPathMethod: ([String: Any], ((String) -> String)?) throws -> String
 }
 
+// MARK: - PathTemplate: Equatable
 extension PathTemplate: Equatable {
     public static func == (lhs: PathTemplate, rhs: PathTemplate) -> Bool {
         return lhs.template == rhs.template && lhs.options == rhs.options
     }
 }
 
+// MARK: - PathTemplate: Hashable
 extension PathTemplate: Hashable {
-    public var hashValue: Int {
-        return template.hashValue ^ options.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(template)
+        hasher.combine(options)
+    }
+}
+
+// MARK: - PathTemplate.Options
+extension PathTemplate {
+    /// Options for path template generation
+    public struct Options {
+        let isCaseSensitive: Bool
+        let isStrict: Bool
+        let isMatchEnd: Bool
+        let delimiter: String
+        let endsWith: [String]?
+        let delimiters: String
+        
+        /// Initializes an Options
+        ///
+        /// - Parameters:
+        ///     - isCaseSensitive: Determines if the path is case sensitive. Defaults to `false`
+        ///     - isStrict: Determines if a trailing delimeter is optional. Defaults to `false`
+        ///     - isMatchEnd: Determines if matches occur at the end. Defaults to `true`
+        ///     - delimiter: The default delimiter for segments. Defaults to `"/"`
+        ///     - endsWith: Optional character, or list of characters, to treat as "end" characters. Defaults to `nil`
+        ///     - delimiters: List of characters to consider delimiters when parsing. Defaults to `"./"`
+        public init(isCaseSensitive: Bool = false,
+                    isStrict: Bool = false,
+                    isMatchEnd: Bool = true,
+                    delimiter: String = "/",
+                    endsWith: [String]? = nil,
+                    delimiters: String = "./") {
+            self.isCaseSensitive = isCaseSensitive
+            self.isStrict = isStrict
+            self.isMatchEnd = isMatchEnd
+            self.delimiter = delimiter
+            self.endsWith = endsWith
+            self.delimiters = delimiters
+        }
+    }
+}
+
+// MARK: - PathTemplate.Options: Equatable
+extension PathTemplate.Options: Equatable, Hashable {
+    public static func == (lhs: PathTemplate.Options, rhs: PathTemplate.Options) -> Bool {
+        return lhs.isCaseSensitive == rhs.isCaseSensitive &&
+            lhs.isStrict == rhs.isStrict &&
+            lhs.isMatchEnd == rhs.isMatchEnd &&
+            lhs.delimiter == rhs.delimiter &&
+            lhs.endsWith == rhs.endsWith &&
+            lhs.delimiters == rhs.delimiters
     }
 }
 
@@ -89,5 +140,17 @@ extension PathTemplate: Hashable {
 private extension Array {
     subscript (safe index: Index) -> Element? {
         return 0 <= index && index < count ? self[index] : nil
+    }
+}
+
+// MARK: - Helpers
+func == <T: Equatable>(lhs: [T]?, rhs: [T]?) -> Bool {
+    switch (lhs, rhs) {
+    case (.some(let lhs), .some(let rhs)):
+        return lhs == rhs
+    case (.none, .none):
+        return true
+    default:
+        return false
     }
 }

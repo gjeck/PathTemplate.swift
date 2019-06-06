@@ -2,15 +2,15 @@ import Foundation
 
 struct OrderedPathRegexFactory {
     func make(_ path: String,
-              options: Options = Options()) -> (regex: NSRegularExpression?, keys: [Token])  {
+              options: PathTemplate.Options = .init()) -> (regex: NSRegularExpression?, keys: [Token])  {
         return tokensToRegex(parse(path, options: options), options: options)
     }
     
-    func compile(_ path: String, options: Options = Options()) -> ([String: Any], ((String) -> String)?) throws -> String {
+    func compile(_ path: String, options: PathTemplate.Options = .init()) -> ([String: Any], ((String) -> String)?) throws -> String {
         return tokensToFunction(parse(path, options: options))
     }
     
-    func parse(_ input: String, options: Options = Options()) -> [Any] {
+    func parse(_ input: String, options: PathTemplate.Options = .init()) -> [Any] {
         let length = input.utf16.count
         let matches = OrderedPathRegexFactory.pathRegex.matches(in: input, options: [],
                                                                 range: NSRange(location: 0, length: length))
@@ -109,7 +109,7 @@ struct OrderedPathRegexFactory {
     }
     
     func tokensToRegex(_ tokens: [Any],
-                       options: Options = Options()) -> (regex: NSRegularExpression?, keys: [Token]) {
+                       options: PathTemplate.Options = .init()) -> (regex: NSRegularExpression?, keys: [Token]) {
         let delimiter = options.delimiter.escaped
         let endsWith = ((options.endsWith ?? []).map { $0.escaped } + ["$"]).joined(separator: "|")
         var route = ""

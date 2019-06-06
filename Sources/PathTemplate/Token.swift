@@ -1,3 +1,5 @@
+import Foundation
+
 struct Token {
     let name: String
     let prefix: String
