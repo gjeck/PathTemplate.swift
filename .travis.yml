@@ -9,6 +9,10 @@ matrix:
       sudo: required
       env: SWIFT_SNAPSHOT=5.0.1
 
+env:
+  global:
+    - CODECOV_ELIGIBLE=true
+
 before_install:
   - git clone https://github.com/IBM-Swift/Package-Builder.git
 
