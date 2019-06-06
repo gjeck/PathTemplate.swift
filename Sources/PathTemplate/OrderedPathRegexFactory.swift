@@ -65,7 +65,7 @@ struct OrderedPathRegexFactory {
             if !pathEscaped && !path.isEmpty {
                 let k = path.utf16.count - 1
                 let charIndex = path.utf16.index(path.utf16.startIndex, offsetBy: k)
-                if options.delimiters.utf16.index(of: path.utf16[charIndex]) != nil {
+                if options.delimiters.utf16.firstIndex(of: path.utf16[charIndex]) != nil {
                     prev = String(path[charIndex])
                     path = String(path[path.startIndex..<charIndex])
                 }
