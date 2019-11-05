@@ -66,7 +66,7 @@ class PathTemplateTests: XCTestCase {
         let paramsA = path.extract("https://www.github.com/gjeck/PathTemplate.swift")
         let paramsB = path.extract("https://www.github.com/")
         XCTAssertEqual(paramsA, ["scheme": "https", "hostname": "www.github.com", "path": "gjeck/PathTemplate.swift"])
-        XCTAssertEqual(paramsB, ["scheme": "https", "hostname": "www.github.com"])
+        XCTAssertEqual(paramsB, ["scheme": "https", "hostname": "www.github.com", "path": ""])
     }
     
     func testItCanExpandParametersFromPathWithMultipleRegularExpressions() {
