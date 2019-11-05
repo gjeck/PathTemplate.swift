@@ -164,6 +164,12 @@ class PathTemplateTests: XCTestCase {
         }
         XCTAssertEqual(expanded, "/u/1234/robot")
     }
+
+    func testOptionalPathsAreExtracted() {
+        let path: PathTemplate = "/:tab?"
+        let params = path.extract("/")
+        XCTAssertEqual(params, ["tab": ""])
+    }
     
     static var allTests = [
         ("testItCanBeInitializedAsAStringLiteral", testItCanBeInitializedAsAStringLiteral),
@@ -184,7 +190,11 @@ class PathTemplateTests: XCTestCase {
         ("testItSupportsZeroOrMoreParameters", testItSupportsZeroOrMoreParameters),
         ("testItSupportsOneOrMoreParameters", testItSupportsOneOrMoreParameters),
         ("testItSupportsCustomMatchedParameters", testItSupportsCustomMatchedParameters),
-        ("testItSupportsUnnamedParameters", testItSupportsUnnamedParameters)
+        ("testItSupportsUnnamedParameters", testItSupportsUnnamedParameters),
+        ("testItSupportsZeroOrMoreParametersAndCustomMatchedParametersWithSpecificDelimiter", testItSupportsZeroOrMoreParametersAndCustomMatchedParametersWithSpecificDelimiter),
+        ("testPathWithUnicodeAndCustomMatchedParametersWork", testPathWithUnicodeAndCustomMatchedParametersWork),
+        ("testItSupportsBasicCustomEncodeStrategy", testItSupportsBasicCustomEncodeStrategy),
+        ("testOptionalPathsAreExtracted", testOptionalPathsAreExtracted)
     ]
 }
 

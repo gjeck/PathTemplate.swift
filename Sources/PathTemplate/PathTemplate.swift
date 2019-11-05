@@ -64,6 +64,8 @@ public struct PathTemplate: CustomStringConvertible, ExpressibleByStringLiteral 
                     return
                 }
                 result[key.name] = str
+            } else if key.isOptional {
+                result[key.name] = ""
             }
         }
         return result
